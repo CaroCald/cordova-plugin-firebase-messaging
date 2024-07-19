@@ -22,6 +22,7 @@ import com.google.firebase.messaging.RemoteMessage;
 
 import static android.content.ContentResolver.SCHEME_ANDROID_RESOURCE;
 
+import fr.antelop.sdk.firebase.AntelopFirebaseMessagingUtil;
 
 public class FirebaseMessagingPluginService extends FirebaseMessagingService {
     private static final String TAG = "FCMPluginService";
@@ -71,10 +72,12 @@ public class FirebaseMessagingPluginService extends FirebaseMessagingService {
         Intent intent = new Intent(ACTION_FCM_TOKEN);
         intent.putExtra(EXTRA_FCM_TOKEN, token);
         broadcastManager.sendBroadcast(intent);
+        AntelopFirebaseMessagingUtil.onTokenRefresh(getBaseContext());
     }
 
     @Override
     public void onMessageReceived(@NonNull RemoteMessage remoteMessage) {
+        if (AntelopFirebaseMessagingUtil.onMessageReceived(getBaseContext(), remoteMessage)){return;}
         FirebaseMessagingPlugin.sendNotification(remoteMessage);
 
         Intent intent = new Intent(ACTION_FCM_MESSAGE);
